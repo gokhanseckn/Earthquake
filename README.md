@@ -1,0 +1,1 @@
+# Last Earthquakes in Turkey
