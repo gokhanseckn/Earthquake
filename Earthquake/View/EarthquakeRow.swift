@@ -56,7 +56,6 @@ struct EarthquakeRow_Previews: PreviewProvider {
             depth: "10",
             type: "ML",
             magnitude: "3.9",
-            country: "Turkiye",
             province: "Kahramanmaras",
             district: "Ekinozu",
             date: "2023-02-28T13:22:02"

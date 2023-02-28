@@ -18,7 +18,7 @@ struct Earthquake: Codable, Identifiable, Hashable {
     var depth: String
     var type: String
     var magnitude: String
-    var country: String
+    var country: String?
     var province: String?
     var district: String?
     var date: String

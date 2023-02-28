@@ -51,18 +51,39 @@ struct ContentView: View {
             }.task {
                 await getLastEarthquakes()
             }
-            .navigationTitle("Last Earthquakes in Turkey")
+            .navigationTitle("Earthquakes in Turkey")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                
+            }
         }
     }
     
     
     func getLastEarthquakes() async {
+        var formatter: DateFormatter {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm"
+            return formatter
+        }
+        
+        let endDate = Date()
+        let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
+        
+        var url: URL? {
+            var components = URLComponents()
+            components.scheme = "https"
+            components.host = "deprem.afad.gov.tr"
+            components.path = "/apiv2/event/filter"
+            components.queryItems = [
+                URLQueryItem(name: "start", value: formatter.string(from: startDate)),
+                URLQueryItem(name: "end", value: formatter.string(from: endDate)),
+                URLQueryItem(name: "orderby", value: "timedesc")
+            ]
+            return components.url
+        }
         do {
-            let url = "https://deprem.afad.gov.tr/apiv2/event/filter?start=2023-02-24&end=2023-02-24 20:10:00&orderby=timedesc"
-            guard let urlString = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-            let mainUrl = URL(string: urlString)!
-            let (data, _) = try await URLSession.shared.data(from: mainUrl)
+            let (data, _) = try await URLSession.shared.data(from: url!)
             earthquakes = try JSONDecoder().decode([Earthquake].self, from: data)
         } catch {
             print(String(describing: error))
