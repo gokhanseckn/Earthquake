@@ -30,11 +30,12 @@ struct BottomSheetView: View {
 
 struct ContentView: View {
     
+    @State private var isLoading: Bool = false
     @State private var earthquakes = [Earthquake]()
     @State private var isPresented: Bool = false
     @State private var selectedEarthquake: Earthquake? = nil
     @State private var selectedDate: Date = Date()
-    @State private var selectedMag: String = "1"
+    @State private var selectedMag: String = "3"
     @State private var searchText: String = ""
     
     var filteredEarthquakes: [Earthquake] {
@@ -49,65 +50,81 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List(filteredEarthquakes, id: \.self) { earthquake in
-                Button {
-                    self.selectedEarthquake = earthquake
-                } label: {
-                    EarthquakeRow(earthquake: earthquake)
-                }
-                .buttonStyle(.plain)
-            }
-            .searchable(text: $searchText)
-            .sheet(item: self.$selectedEarthquake) { earthquake in
-                BottomSheetView(earthquake: earthquake)
-                    .presentationDetents([.fraction(0.7)])
-                    .presentationDragIndicator(.visible)
-            }
-            .toolbar(content: {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    DatePicker("",
-                               selection: $selectedDate,
-                               in: ...Date(),
-                               displayedComponents: [.date]
-                    )
-                    .accessibilityAddTraits(.isHeader)
-                    .onChange(of: selectedDate, perform: { value in
-                        print(selectedDate)
-                        Task {
-                            await getLastEarthquakes(date: selectedDate, mag: selectedMag)
-                        }
-                    })
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Picker("Mag: ", selection: $selectedMag) {
-                        Text("All")
-                            .tag("1")
-                        Text("> 3")
-                            .tag("3")
-                        Text("> 5")
-                            .tag("5")
+            VStack {
+                if isLoading {
+                    ProgressView()
+                } else if filteredEarthquakes.isEmpty {
+                    VStack {
+                        Text("There is no earthquake")
+                        Spacer()
                     }
-                    .padding(.trailing, 10)
-                    .tint(.black)
-                    .background(.gray.opacity(0.2))
-                    .cornerRadius(10)
-                    .onChange(of: selectedMag, perform: { value in
-                        Task {
-                            await getLastEarthquakes(date: selectedDate, mag: selectedMag)
-                        }
-                    })
+                } else {
+                    listView
                 }
-            })
-            .task {
-                await getLastEarthquakes(date: selectedDate, mag: selectedMag)
             }
             .navigationTitle("Earthquakes in Turkey")
+            .searchable(text: $searchText)
+                .sheet(item: self.$selectedEarthquake) { earthquake in
+                    BottomSheetView(earthquake: earthquake)
+                        .presentationDetents([.fraction(0.7)])
+                        .presentationDragIndicator(.visible)
+                }.toolbar(content: {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        toolbarLeadingContent
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        toolbarTrailingContent
+                    }
+                })
+        }.task {
+            await getLastEarthquakes(date: selectedDate, mag: selectedMag)
         }
     }
     
     
+    var listView: some View {
+        List(filteredEarthquakes, id: \.self) { earthquake in
+            Button {
+                self.selectedEarthquake = earthquake
+            } label: {
+                EarthquakeRow(earthquake: earthquake)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    var toolbarLeadingContent: some View {
+        Picker("Mag: ", selection: $selectedMag) {
+            Text("All")
+                .tag("1")
+            Text("> 3")
+                .tag("3")
+            Text("> 5")
+                .tag("5")
+        }
+        .padding(.trailing, 10)
+        .tint(.black)
+        .background(.gray.opacity(0.2))
+        .cornerRadius(10)
+        .onChange(of: selectedMag, perform: { value in
+            Task {
+                await getLastEarthquakes(date: selectedDate, mag: selectedMag)
+            }
+        })
+    }
+    
+    var toolbarTrailingContent: some View {
+        DatePicker("", selection: $selectedDate, in: ...Date(), displayedComponents: [.date])
+            .onChange(of: selectedDate, perform: { value in
+                Task {
+                    await getLastEarthquakes(date: selectedDate, mag: selectedMag)
+                }
+            })
+    }
+    
+    
     func getLastEarthquakes(date: Date, mag: String) async {
+        isLoading = true
         var formatter: DateFormatter {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
@@ -129,9 +146,11 @@ struct ContentView: View {
             ]
             return components.url
         }
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url!)
             earthquakes = try JSONDecoder().decode([Earthquake].self, from: data)
+            isLoading = false
         } catch {
             print(String(describing: error))
             earthquakes = []
