@@ -10,6 +10,17 @@ import SwiftUI
 struct EarthquakeRow: View {
     
     var earthquake: Earthquake
+    var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }
+    
+    var relativeDateTimeFormatter : RelativeDateTimeFormatter {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }
     
     var body: some View {
         HStack(spacing: 30) {
@@ -26,6 +37,8 @@ struct EarthquakeRow: View {
                     .font(.headline)
                 HStack {
                     Text("\(earthquake.depth) km")
+                    Text(dateFormatter.string(from: earthquake.formattedDate))
+                    Text(relativeDateTimeFormatter.localizedString(for: earthquake.formattedDate, relativeTo: Date.now))
                 }
             }
         }
@@ -35,20 +48,19 @@ struct EarthquakeRow: View {
 
 struct EarthquakeRow_Previews: PreviewProvider {
     static var previews: some View {
-        EarthquakeRow(earthquake:
-                        Earthquake(
-                            eventID: "1",
-                            location: "Test",
-                            latitude: "10",
-                            longitude: "10",
-                            depth: "10",
-                            type: "ML",
-                            magnitude: "5",
-                            country: "Test",
-                            province: "Test",
-                            district: "Test",
-                            date: "2023-02-24"
-                        )
+        EarthquakeRow(earthquake:Earthquake(
+            eventID: "1",
+            location: "Test",
+            latitude: "10",
+            longitude: "10",
+            depth: "10",
+            type: "ML",
+            magnitude: "3.9",
+            country: "Turkiye",
+            province: "Kahramanmaras",
+            district: "Ekinozu",
+            date: "2023-02-28T13:22:02"
+        )
         )
     }
 }

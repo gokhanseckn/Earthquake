@@ -8,6 +8,26 @@
 import SwiftUI
 import MapKit
 
+struct BottomSheetView: View {
+    var earthquake: Earthquake
+    
+    var body: some View {
+        VStack {
+            MapView(cities:[City(
+                name: earthquake.province ?? "",
+                coordinate: CLLocationCoordinate2D(
+                    latitude: Double(earthquake.latitude)!,
+                    longitude: Double(earthquake.longitude)!))]
+            )
+            .frame(height: 400)
+            .padding(.top, 20)
+            
+            Text(earthquake.location)
+            Spacer()
+        }
+    }
+}
+
 struct ContentView: View {
     
     @State private var earthquakes = [Earthquake]()
@@ -25,14 +45,9 @@ struct ContentView: View {
                 .buttonStyle(.plain)
             }
             .sheet(item: self.$selectedEarthquake) { earthquake in
-                VStack {
-                    MapView(latitude: Double(earthquake.latitude)!, longitude: Double(earthquake.longitude)!)
-                        .frame(height: 400)
-                    Text(earthquake.location)
-                    Spacer()
-                }
-                .presentationDetents([.fraction(0.7)])
-                .presentationDragIndicator(.visible)
+                BottomSheetView(earthquake: earthquake)
+                    .presentationDetents([.fraction(0.7)])
+                    .presentationDragIndicator(.visible)
             }.task {
                 await getLastEarthquakes()
             }
