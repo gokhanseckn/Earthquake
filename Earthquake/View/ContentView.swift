@@ -33,8 +33,11 @@ struct ContentView: View {
     @State private var earthquakes = [Earthquake]()
     @State private var isPresented: Bool = false
     @State private var selectedEarthquake: Earthquake? = nil
+    @State private var selectedDate: Date = Date()
+    @State private var selectedMag: String = "1"
     @State private var searchText: String = ""
-    var searchResults: [Earthquake] {
+    
+    var filteredEarthquakes: [Earthquake] {
         if searchText.isEmpty {
             return earthquakes
         } else {
@@ -46,7 +49,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List(searchResults, id: \.self) { earthquake in
+            List(filteredEarthquakes, id: \.self) { earthquake in
                 Button {
                     self.selectedEarthquake = earthquake
                 } label: {
@@ -59,23 +62,58 @@ struct ContentView: View {
                 BottomSheetView(earthquake: earthquake)
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
-            }.task {
-                await getLastEarthquakes()
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    DatePicker("",
+                               selection: $selectedDate,
+                               in: ...Date(),
+                               displayedComponents: [.date]
+                    )
+                    .accessibilityAddTraits(.isHeader)
+                    .onChange(of: selectedDate, perform: { value in
+                        print(selectedDate)
+                        Task {
+                            await getLastEarthquakes(date: selectedDate, mag: selectedMag)
+                        }
+                    })
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Picker("Mag: ", selection: $selectedMag) {
+                        Text("All")
+                            .tag("1")
+                        Text("> 3")
+                            .tag("3")
+                        Text("> 5")
+                            .tag("5")
+                    }
+                    .padding(.trailing, 10)
+                    .tint(.black)
+                    .background(.gray.opacity(0.2))
+                    .cornerRadius(10)
+                    .onChange(of: selectedMag, perform: { value in
+                        Task {
+                            await getLastEarthquakes(date: selectedDate, mag: selectedMag)
+                        }
+                    })
+                }
+            })
+            .task {
+                await getLastEarthquakes(date: selectedDate, mag: selectedMag)
             }
             .navigationTitle("Earthquakes in Turkey")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     
-    func getLastEarthquakes() async {
+    func getLastEarthquakes(date: Date, mag: String) async {
         var formatter: DateFormatter {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
             return formatter
         }
-        
-        let endDate = Date()
+        let endDate = date
         let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
         
         var url: URL? {
@@ -86,7 +124,8 @@ struct ContentView: View {
             components.queryItems = [
                 URLQueryItem(name: "start", value: formatter.string(from: startDate)),
                 URLQueryItem(name: "end", value: formatter.string(from: endDate)),
-                URLQueryItem(name: "orderby", value: "timedesc")
+                URLQueryItem(name: "orderby", value: "timedesc"),
+                URLQueryItem(name: "minmag", value: mag)
             ]
             return components.url
         }
