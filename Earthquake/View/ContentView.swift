@@ -33,10 +33,20 @@ struct ContentView: View {
     @State private var earthquakes = [Earthquake]()
     @State private var isPresented: Bool = false
     @State private var selectedEarthquake: Earthquake? = nil
+    @State private var searchText: String = ""
+    var searchResults: [Earthquake] {
+        if searchText.isEmpty {
+            return earthquakes
+        } else {
+            return earthquakes.filter { earthquake in
+                earthquake.location.contains(searchText)
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
-            List(earthquakes, id: \.self) { earthquake in
+            List(searchResults, id: \.self) { earthquake in
                 Button {
                     self.selectedEarthquake = earthquake
                 } label: {
@@ -44,6 +54,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
             }
+            .searchable(text: $searchText)
             .sheet(item: self.$selectedEarthquake) { earthquake in
                 BottomSheetView(earthquake: earthquake)
                     .presentationDetents([.fraction(0.7)])
@@ -53,9 +64,6 @@ struct ContentView: View {
             }
             .navigationTitle("Earthquakes in Turkey")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                
-            }
         }
     }
     
