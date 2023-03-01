@@ -1,6 +1,7 @@
 # Last Earthquakes in Turkey
 
-<img src="Earthquake/images/main.png" alt= “” width="275">
-<img src="Earthquake/images/main_datepicker.png" alt= “” width="275">
+|              Main               |               Filter by date               |
+| :-----------------------------: | :----------------------------------------: |
+| ![](Earthquake/images/main.png) | ![](Earthquake/images/main_datepicker.png) |
 
 <em>Retrieves data from AFAD's website.</em>
