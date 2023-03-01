@@ -24,7 +24,7 @@ struct Earthquake: Codable, Identifiable, Hashable {
     var district: String?
     var date: String
     var formattedDate: Date {
-        return Earthquake.dateFromISOString(string: date) ?? Date()
+        return Calendar.current.date(byAdding: .hour, value: 3, to: Earthquake.dateFromISOString(string: date) ?? Date())!
     }
     var color: Color {
         switch Double(magnitude)! {

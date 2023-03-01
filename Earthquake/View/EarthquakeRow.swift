@@ -25,17 +25,21 @@ struct EarthquakeRow: View {
                         Text(earthquake.province!)
                             .font(.headline)
                         Text(earthquake.district!)
+                            .foregroundColor(.black.opacity(0.6))
                     }
                 } else {
                     Text(earthquake.location)
                         .font(.headline)
+                        .lineLimit(1)
                 }
                 
-                HStack {
-                    Text("\(earthquake.depth) km")
-                    Text(Earthquake.dateFormatter.string(from: earthquake.formattedDate))
+                HStack(spacing: 2) {
+                    Text("\(earthquake.depth) km •")
+                    Text("\(Earthquake.dateFormatter.string(from: earthquake.formattedDate)) •")
                     Text(Earthquake.relativeDateTimeFormatter.localizedString(for: earthquake.formattedDate, relativeTo: Date.now))
                 }
+                .font(.footnote)
+                .foregroundColor(.secondary)
             }
         }
     }
