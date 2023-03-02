@@ -37,10 +37,7 @@ struct MapView: View {
             if vm.isLoading {
                 ProgressView()
                     .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.ultraThinMaterial)
-                    )
+                    .cardBackground()
             }
             
             VStack {
@@ -94,10 +91,7 @@ struct MapView: View {
                     }
                 }
                 .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.ultraThickMaterial)
-                )
+                .cardBackground()
                 .padding()
             }
             
@@ -117,10 +111,7 @@ struct MapView: View {
                 .tag("5")
         }
         .tint(.black)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.ultraThickMaterial)
-        )
+        .cardBackground()
         .onChange(of: vm.selectedMag, perform: { value in
             Task {
                 await vm.getLastEarthquakes()
@@ -132,9 +123,7 @@ struct MapView: View {
         DatePicker("", selection: $vm.selectedDate, in: ...Date(), displayedComponents: [.date])
             .frame(width: 106)
             .padding(.trailing, 6)
-            .background( RoundedRectangle(cornerRadius: 10)
-                .fill(.ultraThickMaterial)
-            )
+            .cardBackground()
             .onChange(of: vm.selectedDate, perform: { value in
                 Task {
                     await vm.getLastEarthquakes()

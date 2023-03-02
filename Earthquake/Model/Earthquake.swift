@@ -47,7 +47,7 @@ struct Earthquake: Codable, Identifiable, Hashable {
         return formatter
     }
     
-    static var relativeDateTimeFormatter : RelativeDateTimeFormatter {
+    static var relativeDateTimeFormatter: RelativeDateTimeFormatter {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         return formatter

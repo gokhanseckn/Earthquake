@@ -14,10 +14,7 @@ struct EarthquakeRow: View {
     var body: some View {
         HStack(spacing: 10) {
             Text(String(format: "%.1f", Double(earthquake.magnitude) ?? "0"))
-                .font(.headline)
-                .padding()
-                .background(earthquake.color)
-                .cornerRadius(10)
+                .magnitudeCard(color: earthquake.color)
             
             VStack(alignment: .leading) {
                 if  (earthquake.province != nil) && (earthquake.district != nil) {

@@ -23,59 +23,57 @@ struct EarthquakeBottomSheetView: View {
             .ignoresSafeArea()
             
             VStack {
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "arrow.backward")
-                    }
-                    .buttonStyle(.plain)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.ultraThickMaterial)
-                    )
-
-                    Spacer()
-                }.padding(.horizontal)
+                backArrow
+                    .padding(.horizontal)
                 Spacer()
-                HStack {
-                    Text(String(format: "%.1f", Double(earthquake.magnitude) ?? "0"))
-                        .font(.headline)
-                        .padding()
-                        .background(earthquake.color)
-                        .cornerRadius(10)
-                    
-                    VStack(alignment: .leading) {
-                        Text(earthquake.province ?? earthquake.location)
-                            .font(.headline)
-                        Text(earthquake.district ?? "")
-                            .foregroundColor(.black.opacity(0.6))
-                    }
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 2) {
-                        HStack {
-                            Text("\(earthquake.depth) km")
-                            Text("•")
-                            Text("\(Earthquake.dateFormatter.string(from: earthquake.formattedDate))")
-                        }
-                        Text(Earthquake.relativeDateTimeFormatter.localizedString(for: earthquake.formattedDate, relativeTo: Date.now))
-                    }
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundColor(.secondary)
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.ultraThickMaterial)
-                )
-                .padding()
+                cardView
+                    .padding()
+                    .cardBackground()
+                    .padding()
+            }
+        }
+    }
+    
+    var backArrow: some View {
+        HStack {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+            }
+            .buttonStyle(.plain)
+            .padding()
+            .cardBackground()
+            
+            Spacer()
+        }
+    }
+    
+    var cardView: some View {
+        HStack {
+            Text(String(format: "%.1f", Double(earthquake.magnitude) ?? "0"))
+                .magnitudeCard(color: earthquake.color)
+            
+            VStack(alignment: .leading) {
+                Text(earthquake.province ?? earthquake.location)
+                    .font(.headline)
+                Text(earthquake.district ?? "")
+                    .foregroundColor(.black.opacity(0.6))
             }
             
+            Spacer()
             
+            VStack(spacing: 2) {
+                HStack {
+                    Text("\(earthquake.depth) km")
+                    Text("•")
+                    Text("\(Earthquake.dateFormatter.string(from: earthquake.formattedDate))")
+                }
+                Text(Earthquake.relativeDateTimeFormatter.localizedString(for: earthquake.formattedDate, relativeTo: Date.now))
+            }
+            .font(.footnote)
+            .fontWeight(.regular)
+            .foregroundColor(.secondary)
         }
     }
 }
