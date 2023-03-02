@@ -35,11 +35,10 @@ struct ContentView: View {
             }
             .navigationTitle("Earthquakes in Turkey")
             .searchable(text: $vm.searchText)
-                .sheet(item: self.$selectedEarthquake) { earthquake in
+                .fullScreenCover(item: self.$selectedEarthquake) { earthquake in
                     EarthquakeBottomSheetView(earthquake: earthquake)
-                        .presentationDetents([.fraction(0.7)])
-                        .presentationDragIndicator(.visible)
-                }.toolbar(content: {
+                }
+                .toolbar(content: {
                     ToolbarItem(placement: .navigationBarLeading) {
                         toolbarLeadingContent
                     }

@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 
 struct EarthquakeBottomSheetView: View {
+    @Environment(\.dismiss) var dismiss
     var earthquake: Earthquake
     
     var body: some View {
@@ -22,6 +23,21 @@ struct EarthquakeBottomSheetView: View {
             .ignoresSafeArea()
             
             VStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "arrow.backward")
+                    }
+                    .buttonStyle(.plain)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.ultraThickMaterial)
+                    )
+
+                    Spacer()
+                }.padding(.horizontal)
                 Spacer()
                 HStack {
                     Text(String(format: "%.1f", Double(earthquake.magnitude) ?? "0"))
