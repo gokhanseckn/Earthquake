@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		374130C129B0DE270031DAF5 /* map_detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 374130BF29B0DE270031DAF5 /* map_detail.png */; };
+		374130C229B0DE270031DAF5 /* map_view.png in Resources */ = {isa = PBXBuildFile; fileRef = 374130C029B0DE270031DAF5 /* map_view.png */; };
 		3748902F29AF7CBF000A485F /* EarthquakeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3748902E29AF7CBF000A485F /* EarthquakeViewModel.swift */; };
 		3748903129AF8B6A000A485F /* EarthquakeBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3748903029AF8B6A000A485F /* EarthquakeBottomSheetView.swift */; };
 		3748903329AF8D6F000A485F /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3748903229AF8D6F000A485F /* City.swift */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		374130BF29B0DE270031DAF5 /* map_detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_detail.png; sourceTree = "<group>"; };
+		374130C029B0DE270031DAF5 /* map_view.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_view.png; sourceTree = "<group>"; };
 		3748902E29AF7CBF000A485F /* EarthquakeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarthquakeViewModel.swift; sourceTree = "<group>"; };
 		3748903029AF8B6A000A485F /* EarthquakeBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarthquakeBottomSheetView.swift; sourceTree = "<group>"; };
 		3748903229AF8D6F000A485F /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
@@ -66,6 +70,8 @@
 			children = (
 				3748903629AF929A000A485F /* main_datepicker.png */,
 				3748903529AF929A000A485F /* main.png */,
+				374130BF29B0DE270031DAF5 /* map_detail.png */,
+				374130C029B0DE270031DAF5 /* map_view.png */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -190,9 +196,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3758869C29A5094100A5FAF2 /* Preview Assets.xcassets in Resources */,
+				374130C229B0DE270031DAF5 /* map_view.png in Resources */,
 				3758869929A5094100A5FAF2 /* Assets.xcassets in Resources */,
 				3748903829AF929A000A485F /* main_datepicker.png in Resources */,
 				3748903729AF929A000A485F /* main.png in Resources */,
+				374130C129B0DE270031DAF5 /* map_detail.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
