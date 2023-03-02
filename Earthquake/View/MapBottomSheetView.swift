@@ -19,7 +19,12 @@ struct MapBottomSheetView: View {
                 ),
             annotationItems: cities
         ) { place in
-            MapMarker(coordinate: place.coordinate)
+            MapAnnotation(coordinate: place.coordinate) {
+                Image(systemName: "mappin.circle.fill")
+                    .renderingMode(.original)
+                    .shadow(radius: 4)
+                    .font(.title)
+            }
         }
     }
 }

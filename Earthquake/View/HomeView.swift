@@ -19,7 +19,8 @@ struct HomeView: View {
             VStack {
                 if vm.isLoading {
                     ProgressView()
-                } else if vm.filteredEarthquakes.isEmpty {
+                }
+                else if vm.filteredEarthquakes.isEmpty {
                     VStack {
                         Text("There is no earthquake")
                         Spacer()
@@ -27,7 +28,9 @@ struct HomeView: View {
                 } else {
                     listView
                         .refreshable {
-                            await vm.getLastEarthquakes()
+                            Task {
+                                await vm.getLastEarthquakes()
+                            }
                         }
                 }
             }

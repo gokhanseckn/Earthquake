@@ -10,6 +10,8 @@ import MapKit
 
 struct ContentView: View {
     
+    // TodoGokhan: Create components for repetitive elements like bottom view used in maps
+    
     @State private var selection = 0
     // .environment(\.symbolVariants, .none) -> without this, tab bar icon is always filled
     

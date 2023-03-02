@@ -14,11 +14,14 @@ class EarthquakeViewModel: ObservableObject {
     
     @Published var earthquakes: [Earthquake] = []
     @Published var cities: [City] = []
+    @Published var currentEarthquake: Earthquake = sampleEarthquake
     @Published var mapRegion: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     @Published var isLoading: Bool = false
     @Published var searchText: String = ""
     @Published var selectedDate: Date = Date()
     @Published var selectedMag: String = "3"
+    
+    let turkeyLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 38.9637, longitude: 35.2433)
     
     var filteredEarthquakes: [Earthquake] {
         if searchText.isEmpty {
@@ -31,18 +34,43 @@ class EarthquakeViewModel: ObservableObject {
     }
     
     func updateMapRegion(location: CLLocationCoordinate2D) {
-        withAnimation {
+        withAnimation(.easeOut) {
             mapRegion = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         }
     }
     
+    func nextButtonPressed() {
+        guard let currentIndex = earthquakes.firstIndex(where: { e in Double(e.latitude) == mapRegion.latitude && Double(e.longitude) == mapRegion.longitude }) else {
+            print("Should never happen")
+            return
+        }
+        let nextIndex = currentIndex + 1
+        guard earthquakes.indices.contains(nextIndex) else {
+            // next index is not valid
+            guard let firstLocation = earthquakes.first else { return }
+            currentEarthquake = firstLocation
+            updateMapRegion(location: CLLocationCoordinate2D(
+                latitude: Double(firstLocation.latitude)!,
+                longitude: Double(firstLocation.longitude)!
+            ))
+            return
+        }
+        // next is valid
+        let nextLocation = earthquakes[nextIndex]
+        currentEarthquake = nextLocation
+        updateMapRegion(location: CLLocationCoordinate2D(
+            latitude: Double(nextLocation.latitude)!,
+            longitude: Double(nextLocation.longitude)!
+        ))
+    }
+    
     func getLastEarthquakes() async {
-        isLoading = true
         var formatter: DateFormatter {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd HH:mm"
             return formatter
         }
+        isLoading = true
         let endDate = selectedDate
         let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
         
@@ -72,9 +100,10 @@ class EarthquakeViewModel: ObservableObject {
                 )))
             })
             updateMapRegion(location: CLLocationCoordinate2D(
-                latitude: Double(earthquakes.first?.latitude ?? "38.9637")!,
-                longitude: Double(earthquakes.first?.latitude ?? "35.2433")!
+                latitude: Double(earthquakes.first?.latitude ?? "\(turkeyLocation.latitude)")!,
+                longitude: Double(earthquakes.first?.longitude ?? "\(turkeyLocation.longitude)")!
             ))
+            currentEarthquake = earthquakes.first ?? sampleEarthquake
             isLoading = false
         } catch {
             print(String(describing: error))

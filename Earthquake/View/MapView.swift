@@ -14,6 +14,7 @@ struct MapView: View {
     
     var body: some View {
         ZStack {
+            
             Map(coordinateRegion:
                     .constant(MKCoordinateRegion(
                         center: vm.mapRegion,
@@ -21,7 +22,25 @@ struct MapView: View {
                     ),
                 annotationItems: vm.cities
             ) { place in
-                MapMarker(coordinate: place.coordinate)
+                MapAnnotation(coordinate: place.coordinate) {
+                    Image(systemName: "mappin.circle.fill")
+                        .renderingMode(.original)
+                        .shadow(radius: 4)
+                        .font(.title)
+                        .scaleEffect(
+                            String(place.coordinate.latitude) == vm.currentEarthquake.latitude && String(place.coordinate.longitude) == vm.currentEarthquake.longitude
+                            ? 1 : 0.7
+                        )
+                }
+            }
+            
+            if vm.isLoading {
+                ProgressView()
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.ultraThinMaterial)
+                    )
             }
             
             VStack {
@@ -32,7 +51,56 @@ struct MapView: View {
                 }
                 .padding()
                 Spacer()
+                
+                VStack {
+                    if vm.earthquakes.isEmpty {
+                        Text("There is no earthquake")
+                    } else {
+                        HStack {
+                            Text(String(format: "%.1f", Double(vm.currentEarthquake.magnitude) ?? "0"))
+                                .font(.headline)
+                                .padding()
+                                .background(vm.currentEarthquake.color)
+                                .cornerRadius(10)
+                            
+                            VStack(alignment: .leading) {
+                                Text(vm.currentEarthquake.province ?? vm.currentEarthquake.location)
+                                    .font(.headline)
+                                    .lineLimit(1)
+                                Text(vm.currentEarthquake.district ?? "")
+                                    .foregroundColor(.black.opacity(0.6))
+                                
+                                HStack {
+                                    Text("\(Earthquake.dateFormatter.string(from: vm.currentEarthquake.formattedDate)) •")
+                                    Text(Earthquake.relativeDateTimeFormatter.localizedString(for: vm.currentEarthquake.formattedDate, relativeTo: Date.now))
+                                }
+                                .font(.footnote)
+                                .fontWeight(.regular)
+                                .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button {
+                                vm.nextButtonPressed()
+                            } label: {
+                                Text("Next")
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            .background(.gray.opacity(0.4))
+                            .cornerRadius(10)
+                        }
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.ultraThickMaterial)
+                )
+                .padding()
             }
+            
         }
         .task {
             await vm.getLastEarthquakes()
