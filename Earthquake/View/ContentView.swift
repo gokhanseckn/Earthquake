@@ -10,85 +10,25 @@ import MapKit
 
 struct ContentView: View {
     
-    @StateObject private var vm = EarthquakeViewModel()
-    @State private var isPresented: Bool = false
-    @State private var selectedEarthquake: Earthquake? = nil
-    @State private var selectedDate: Date = Date()
-    @State private var selectedMag: String = "3"
+    @State private var selection = 0
+    // .environment(\.symbolVariants, .none) -> without this, tab bar icon is always filled
     
     var body: some View {
-        NavigationView {
-            VStack {
-                if vm.isLoading {
-                    ProgressView()
-                } else if vm.filteredEarthquakes.isEmpty {
-                    VStack {
-                        Text("There is no earthquake")
-                        Spacer()
-                    }
-                } else {
-                    listView
-                        .refreshable {
-                            await vm.getLastEarthquakes(date: selectedDate, mag: selectedMag)
-                        }
+        TabView(selection: $selection) {
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: selection == 0 ? "house.fill" : "house")
+                        .environment(\.symbolVariants, .none)
                 }
-            }
-            .navigationTitle("Earthquakes in Turkey")
-            .searchable(text: $vm.searchText)
-                .fullScreenCover(item: self.$selectedEarthquake) { earthquake in
-                    EarthquakeBottomSheetView(earthquake: earthquake)
+                .tag(0)
+            
+            MapView()
+                .tabItem {
+                    Label("Map", systemImage: selection == 1 ? "map.fill" : "map")
+                        .environment(\.symbolVariants, .none)
                 }
-                .toolbar(content: {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        toolbarLeadingContent
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        toolbarTrailingContent
-                    }
-                })
-        }.task {
-            await vm.getLastEarthquakes(date: selectedDate, mag: selectedMag)
-        }
-    }
-    
-    var listView: some View {
-        List(vm.filteredEarthquakes, id: \.self) { earthquake in
-            Button {
-                self.selectedEarthquake = earthquake
-            } label: {
-                EarthquakeRow(earthquake: earthquake)
-            }
-            .buttonStyle(.plain)
-        }
-    }
-    
-    var toolbarLeadingContent: some View {
-        Picker("Mag: ", selection: $selectedMag) {
-            Text("All")
-                .tag("1")
-            Text("> 3")
-                .tag("3")
-            Text("> 5")
-                .tag("5")
-        }
-        .padding(.trailing, 10)
-        .tint(.black)
-        .background(.gray.opacity(0.2))
-        .cornerRadius(10)
-        .onChange(of: selectedMag, perform: { value in
-            Task {
-                await vm.getLastEarthquakes(date: selectedDate, mag: selectedMag)
-            }
-        })
-    }
-    
-    var toolbarTrailingContent: some View {
-        DatePicker("", selection: $selectedDate, in: ...Date(), displayedComponents: [.date])
-            .onChange(of: selectedDate, perform: { value in
-                Task {
-                    await vm.getLastEarthquakes(date: selectedDate, mag: selectedMag)
-                }
-            })
+                .tag(1)
+        }.accentColor(.primary)
     }
 }
 

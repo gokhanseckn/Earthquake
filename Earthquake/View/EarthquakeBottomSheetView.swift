@@ -14,7 +14,7 @@ struct EarthquakeBottomSheetView: View {
     
     var body: some View {
         ZStack {
-            MapView(cities:[City(
+            MapBottomSheetView(cities:[City(
                 name: earthquake.province ?? "",
                 coordinate: CLLocationCoordinate2D(
                     latitude: Double(earthquake.latitude)!,
