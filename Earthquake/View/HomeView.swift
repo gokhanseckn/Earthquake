@@ -65,8 +65,6 @@ struct HomeView: View {
     
     var toolbarLeadingContent: some View {
         Picker("Mag: ", selection: $vm.selectedMag) {
-            Text("All")
-                .tag("1")
             Text("> 3")
                 .tag("3")
             Text("> 5")
